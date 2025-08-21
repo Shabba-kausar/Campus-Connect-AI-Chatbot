@@ -1,155 +1,135 @@
-# JEC AI Chatbot
+# College AI Chatbot
 
-An intelligent AI-powered chatbot for Jorhat Engineering College designed to assist students with college-related queries.
+An intelligent chatbot system designed to provide information about college-related queries using Django, Natural Language Processing, and Google's Gemini AI.
 
 ## Features
 
-- **Interactive Q&A**: Provides real-time answers to student questions
-- **AI-Powered**: Uses Natural Language Processing to understand and respond to queries
-- **Topics Covered**:
-  - Admission procedures
-  - Exam schedules
-  - College festivals
-  - Clubs and societies
-  - Canteen information
-  - Hostel details
-  - Faculty information
-  - Placement details
-  - Library resources
-  - Campus facilities
-- **Personalized Experience**: Remembers users across sessions
-- **Beautiful UI**: Modern, responsive interface with animations
-- **24/7 Availability**: Always accessible to answer questions
+### 1. Intelligent Response System
+- Multi-layered response generation using:
+  - Quick reply handlers for common queries
+  - Category-based matching
+  - Keyword matching
+  - Semantic search
+  - Gemini AI integration for enhanced responses
+  - Fallback responses
 
-## Technologies Used
+### 2. Information Categories
+The chatbot provides information about:
+- College Facilities
+- Course Information
+- Class Timetables
+- Exam Schedules
+- Campus Events
+- Student Clubs
+- Library Hours
+- Admission Process
+- Faculty Information
+- Contact Information
 
-- **Frontend**: HTML, CSS, JavaScript, jQuery
-- **Backend**: Python, Django
-- **AI/NLP**: scikit-learn, TF-IDF, Cosine Similarity
-- **Database**: SQLite (default), can be configured for PostgreSQL/MySQL
+### 3. Interactive Interface
+- Clean and responsive chat interface
+- Quick reply buttons for common queries
+- Real-time message updates
+- User session management
+- Message history tracking
 
-## Installation Instructions
+### 4. AI Integration
+- Integrated with Google's Gemini AI for enhanced responses
+- Natural Language Processing for query understanding
+- Semantic similarity matching
+- Context-aware responses
 
-### Prerequisites
+## Technical Stack
 
-- Python 3.8+ installed
-- Git (optional, for cloning)
-- pip (Python package manager)
+- **Backend**: Django
+- **Frontend**: HTML, CSS, JavaScript
+- **Database**: SQLite
+- **AI/ML**:
+  - Google Gemini AI
+  - scikit-learn for NLP
+  - TF-IDF Vectorization
+  - Cosine Similarity
 
-### Step 1:  Download the Repository
+## Setup Instructions
 
+1. Clone the repository:
 ```bash
-Extract project Zip file
-# or download and extract the ZIP file
-cd JECAiBot
+git clone [repository-url]
+cd collage-AI-chatbot
 ```
 
-### Step 2: Create a Virtual Environment (Recommended)
-
+2. Create and activate a virtual environment:
 ```bash
-# On Windows
 python -m venv venv
-venv\Scripts\activate
-
-# On macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-### Step 3: Install Required Packages
-
+3. Install dependencies:
 ```bash
 pip install -r requirements.txt
-# If requirements.txt is not available, run:
-pip install django scikit-learn numpy
 ```
 
-### Step 4: Configure Database
+4. Set up environment variables:
+- Create a `.env` file in the project root
+- Add your Gemini API key:
+```
+GEMINI_API_KEY=your_api_key_here
+```
 
-The project uses SQLite by default. No additional configuration is needed unless you want to use a different database.
-
-### Step 5: Migrate Database
-
+5. Initialize the database:
 ```bash
-python manage.py makemigrations
 python manage.py migrate
-```
-
-### Step 6: Populate Initial Data
-
-```bash
 python manage.py populate_data
 ```
 
-### Step 7: Collect Static Files
-
-```bash
-python manage.py collectstatic --noinput
-```
-
-### Step 8: Create a Superuser (Optional, for Admin Access)
-
-```bash
-python manage.py createsuperuser
-# Follow the prompts to create an admin account
-```
-
-## Running the Application
-
+6. Run the development server:
 ```bash
 python manage.py runserver
 ```
 
-The application will be available at http://127.0.0.1:8000/
+7. Access the chatbot at: `http://localhost:8000`
 
 ## Usage
 
-1. Open your web browser and navigate to http://127.0.0.1:8000/
-2. Click on the chat bubble in the bottom right corner to open the chatbot
-3. For first-time users, the chatbot will ask for your name and phone number
-4. Type your question in the input field and press Enter or click the send button
-5. The AI will process your question and provide a relevant answer
+1. **Quick Replies**: Click on the suggested quick reply buttons for common queries
+2. **Custom Questions**: Type your questions in natural language
+3. **Follow-up Questions**: The chatbot will suggest related topics you can ask about
+4. **Detailed Information**: Ask for specific details about any topic
 
-## Accessing the Admin Panel
+## Project Structure
 
-1. Navigate to http://127.0.0.1:8000/admin/
-2. Log in with the superuser credentials you created
-3. Here you can manage categories, college data, conversations, and messages
+```
+collage-AI-chatbot/
+├── bot/                    # Main application directory
+│   ├── management/        # Custom management commands
+│   ├── migrations/        # Database migrations
+│   ├── models.py         # Database models
+│   ├── views.py          # View logic and response generation
+│   ├── urls.py           # URL routing
+│   └── gemini_helper.py  # Gemini AI integration
+├── static/                # Static files
+│   ├── css/             # Stylesheets
+│   └── js/              # JavaScript files
+├── templates/             # HTML templates
+├── manage.py             # Django management script
+└── requirements.txt      # Project dependencies
+```
 
-## Customization
+## Contributing
 
-### Adding More Questions and Answers
-
-1. Log in to the admin panel
-2. Navigate to "College Data"
-3. Click "Add College Data"
-4. Select a category, add a question, answer, and relevant keywords
-5. Save the entry
-
-### Modifying the UI
-
-- CSS styles are located in `static/css/chatbot.css`
-- JavaScript functionality is in `static/js/chatbot.js`
-- HTML template is in `templates/index.html`
-
-## Deployment
-
-For production deployment:
-
-1. Set `DEBUG = False` in `JECAiBot/settings.py`
-2. Configure a production-ready database like PostgreSQL
-3. Use a WSGI server like Gunicorn
-4. Set up a reverse proxy with Nginx or Apache
-5. Configure static file serving through your web server
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
 
-[Include license information here]
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Contributors
+## Acknowledgments
 
-[List contributors here]
-
-## Contact
-
-For any queries, please contact [Your Email Address] 
+- Google Gemini AI for enhanced response generation
+- Django framework
+- scikit-learn for NLP capabilities
+- Contributors and maintainers 

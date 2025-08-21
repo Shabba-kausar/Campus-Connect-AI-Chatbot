@@ -50,12 +50,12 @@ class Command(BaseCommand):
         data_points = [
             {
                 "question": "What are the eligibility criteria for B.Tech admission?",
-                "answer": "Applicants must pass the Higher Secondary Examination with Physics, Chemistry, and Mathematics and must be residents of Assam.",
+                "answer": "Applicants must pass the Higher Secondary Examination with Physics, Chemistry, and Mathematics. Please check with the admissions office for specific eligibility criteria.",
                 "keywords": "eligibility, criteria, b.tech, admission, higher secondary, qualification"
             },
             {
-                "question": "Does JEC accept lateral entry for diploma holders?",
-                "answer": "Yes, diploma holders can apply for lateral entry to B.Tech programs via the Lateral Entrance Examination.",
+                "question": "Does the college accept lateral entry for diploma holders?",
+                "answer": "Yes, diploma holders can apply for lateral entry to B.Tech programs. Contact the admissions office for specific requirements and procedures.",
                 "keywords": "lateral entry, diploma holders, b.tech"
             },
             {
@@ -65,8 +65,8 @@ class Command(BaseCommand):
             },
             {
                 "question": "What is the fee structure for B.Tech?",
-                "answer": "The approximate annual fee is around ₹11,000, which includes tuition and miscellaneous charges.",
-                "keywords": "fee structure, b.tech, tuition, cost, expenses"
+                "answer": "Please contact the admissions office or visit our website for the current fee structure and payment options.",
+                "keywords": "fee structure, b.tech, tuition, cost"
             },
             {
                 "question": "Are admissions based on merit?",
@@ -80,8 +80,8 @@ class Command(BaseCommand):
     def populate_academics_data(self, category):
         data_points = [
             {
-                "question": "What branches of engineering are offered at JEC?",
-                "answer": "JEC offers B.Tech in Civil, Mechanical, Electrical, Computer Science, and Instrumentation Engineering.",
+                "question": "What branches of engineering are offered?",
+                "answer": "We offer B.Tech in various engineering disciplines. Contact the admissions office or visit our website for the complete list of available programs.",
                 "keywords": "branches, engineering, programs, departments, courses"
             },
             {
@@ -142,8 +142,8 @@ class Command(BaseCommand):
     def populate_hostel_data(self, category):
         data_points = [
             {
-                "question": "How many hostels are there at JEC?",
-                "answer": "Jorhat Engineering College has separate hostels for male and female students. There are 10 hostels in total: 2 for girls and 8 for boys.",
+                "question": "How many hostels are there?",
+                "answer": "Our college has separate hostels for male and female students with modern amenities and facilities.",
                 "keywords": "hostels, number, boys, girls, accommodation"
             },
             {
@@ -173,8 +173,8 @@ class Command(BaseCommand):
     def populate_clubs_data(self, category):
         data_points = [
             {
-                "question": "What clubs are available at JEC?",
-                "answer": "The college has a variety of clubs, including cultural clubs (RAMDHENU, DHWANY, Mukta, Jetuka), Fotokraft for photography, TRENDZ for modeling, Roboworld for robotics, GDGC, D-Code, and GLUG for coding, among others.",
+                "question": "What clubs are available at the college?",
+                "answer": "Our college has a variety of clubs including cultural clubs, photography club, robotics club, and coding clubs. Each club offers unique opportunities for skill development and networking.",
                 "keywords": "clubs, organizations, societies, student groups"
             },
             {
@@ -240,8 +240,8 @@ class Command(BaseCommand):
                 "keywords": "training, placement cell, recruitment, career"
             },
             {
-                "question": "What companies visit JEC for campus placements?",
-                "answer": "Leading companies across IT, core engineering, and public sectors visit JEC for recruitment.",
+                "question": "What companies visit for campus placements?",
+                "answer": "Leading companies from IT, core engineering, and public sectors visit our campus for recruitment. Contact the placement cell for specific details.",
                 "keywords": "companies, recruiters, campus placements, job"
             },
             {
@@ -266,8 +266,8 @@ class Command(BaseCommand):
     def populate_fees_data(self, category):
         data_points = [
             {
-                "question": "What is the fee structure for B.Tech at JEC?",
-                "answer": "The approximate annual fee is around ₹11,000, which includes tuition and miscellaneous charges.",
+                "question": "What is the fee structure for B.Tech?",
+                "answer": "Please contact the admissions office or visit our website for the current fee structure and payment options.",
                 "keywords": "fee structure, b.tech, tuition, cost"
             },
             {
@@ -370,7 +370,7 @@ class Command(BaseCommand):
             },
             {
                 "question": "What food options are available in the canteen?",
-                "answer": "The canteen offers a variety of food options including North Indian, South Indian, and local Assamese cuisine, as well as snacks and beverages.",
+                "answer": "The canteen offers a variety of food options including North Indian, South Indian cuisine, as well as snacks and beverages.",
                 "keywords": "food options, menu, meals, dishes, cuisine"
             },
             {

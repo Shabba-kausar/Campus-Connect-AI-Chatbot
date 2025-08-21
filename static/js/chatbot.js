@@ -9,11 +9,16 @@ $(document).ready(function() {
     
     // Quick replies for common questions
     const quickReplies = [
-        "Tell me about admission",
-        "What clubs are available?",
-        "Hostel facilities",
-        "Exam schedule",
-        "Canteen information"
+        "College Facilities",
+        "Course Information",
+        "Class Timetables",
+        "Exam Schedule",
+        "Campus Events",
+        "Student Clubs",
+        "Library Hours",
+        "Admission Process",
+        "Faculty Information",
+        "Contact Information"
     ];
 
     // Toggle chatbot visibility
@@ -65,7 +70,7 @@ $(document).ready(function() {
 
     // Show welcome message
     function showWelcomeMessage() {
-        const welcomeMessage = "Hi there! 👋 I'm the JEC AI Assistant. I can help you with information about Jorhat Engineering College.";
+        const welcomeMessage = "Hi there! 👋 I'm the Collage AI Assistant. I can help you with information about our college.";
         addMessage(welcomeMessage, false);
     }
 
@@ -208,7 +213,7 @@ $(document).ready(function() {
             isFormSubmitted = true;
             
             $('#user-details-form').closest('.bot-message').remove();
-            addMessage(`Thank you, ${name}! I'll remember you next time. How can I help you with information about JEC?`, false);
+            addMessage(`Thank you, ${name}! I'll remember you next time. How can I help you with information about our college?`, false);
             showQuickReplies();
         }
     });
