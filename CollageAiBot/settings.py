@@ -3,8 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()  # load .env file
 
-# Gemini API Key load
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# OpenAI API Key load
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 from decouple import config
 
@@ -129,6 +129,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GEMINI_API_KEY = config("GEMINI_API_KEY")
+# Legacy: GEMINI_API_KEY removed. Use OPENAI_API_KEY in .env instead.
 
 

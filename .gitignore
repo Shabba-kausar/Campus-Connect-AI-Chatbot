@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# Editor directories
+.vscode/
+/.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Data files and databases to avoid pushing to Git
+db.sqlite3
+*.npy
+*.txt
+manuu_vector_db/
+manuu_website_data/
+data/
+tmp_*.py

@@ -1,251 +1,231 @@
-$(document).ready(function() {
-    // Variables
-    let isFormSubmitted = false;
-    let hasResponded = false;
-    let storedName = localStorage.getItem('name');
-    let storedPhone = localStorage.getItem('phone');
-    let userId = localStorage.getItem('user_id');
-    let isTyping = false;
-    
-    // Quick replies for common questions
-    const quickReplies = [
-        "College Facilities",
-        "Course Information",
-        "Class Timetables",
-        "Exam Schedule",
-        "Campus Events",
-        "Student Clubs",
-        "Library Hours",
-        "Admission Process",
-        "Faculty Information",
-        "Contact Information"
-    ];
+document.addEventListener('DOMContentLoaded', () => {
+    const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    const chatBody = document.getElementById('chat-body');
+    const suggestionChips = document.querySelectorAll('.suggestion-chip');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const clearChatBtn = document.getElementById('clear-chat-btn');
 
-    // Toggle chatbot visibility
-    $('.chat-toggle-btn').click(function() {
-        $('#chatbot-container').toggle();
-        
-        // If first time opening or no stored user details
-        if (!hasResponded) {
-            setTimeout(function() {
-                showWelcomeMessage();
-                hasResponded = true;
-                
-                if (!storedName || !storedPhone) {
-                    setTimeout(function() {
-                        showForm();
-                    }, 1000);
-                } else {
-                    setTimeout(function() {
-                        addMessage(`Welcome back, ${storedName}! How can I assist you today?`, false);
-                        showQuickReplies();
-                        isFormSubmitted = true;
-                    }, 1000);
-                }
-            }, 500);
-        }
-    });
-
-    // Close chatbot
-    $('.close-btn').click(function() {
-        $('#chatbot-container').hide();
-    });
-
-    // Add message to chat
-    function addMessage(message, isUser, withTimestamp = true) {
-        const messageClass = isUser ? 'user-message' : 'bot-message';
-        let messageHTML = `<div class="${messageClass}">${message}`;
-        
-        if (withTimestamp) {
-            const now = new Date();
-            const timeString = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
-            messageHTML += `<div class="message-timestamp">${timeString}</div>`;
-        }
-        
-        messageHTML += '</div>';
-        
-        $('#chat-content').append(messageHTML);
-        scrollToBottom();
+    // Attempt to get logo from global variable, default to standard image
+    let logoSrc = '/static/images/manuu_logo.png';
+    if (window.STATIC_URL) {
+        logoSrc = window.STATIC_URL + 'images/manuu_logo.png';
     }
 
-    // Show welcome message
-    function showWelcomeMessage() {
-        const welcomeMessage = "Hi there! 👋 I'm the Collage AI Assistant. I can help you with information about our college.";
-        addMessage(welcomeMessage, false);
-    }
-
-    // Show typing indicator
-    function showTypingIndicator() {
-        if (!isTyping) {
-            isTyping = true;
-            $('#chat-content').append('<div class="typing-indicator" id="typing-indicator"><span></span><span></span><span></span></div>');
-            scrollToBottom();
-        }
-    }
-
-    // Hide typing indicator
-    function hideTypingIndicator() {
-        isTyping = false;
-        $('#typing-indicator').remove();
-    }
-
-    // Scroll to bottom of chat
-    function scrollToBottom() {
-        $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
-    }
-
-    // Show form for user details
-    function showForm() {
-        const formHTML = `
-            <div class="bot-message">
-                <p>To provide you with personalized assistance, could you please share your name and phone number?</p>
-                <form id="user-details-form">
-                    <h3>Your Details</h3>
-                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
-                    <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
-                    <button type="submit">Submit</button>
-                </form>
-            </div>`;
-        $('#chat-content').append(formHTML);
-        scrollToBottom();
-    }
-
-    // Show quick replies
-    function showQuickReplies() {
-        let quickRepliesHTML = '<div class="quick-replies">';
-        quickReplies.forEach(reply => {
-            quickRepliesHTML += `<div class="quick-reply">${reply}</div>`;
+    // Scroll to bottom helper
+    const scrollToBottom = () => {
+        chatBody.scrollTo({
+            top: chatBody.scrollHeight,
+            behavior: 'smooth'
         });
-        quickRepliesHTML += '</div>';
-        
-        $('#chat-content').append('<div class="bot-message">Here are some topics you might be interested in:<div class="quick-replies">' + quickRepliesHTML + '</div></div>');
-        scrollToBottom();
-    }
+    };
 
-    // Send button click
-    $('#send-btn').click(function() {
-        sendMessage();
-    });
-
-    // Enter key press in input
-    $('#chat-input').keypress(function(e) {
-        if (e.which == 13) {
+    // Event Listeners
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
             sendMessage();
-            return false;
         }
     });
 
-    // Click on quick reply
-    $(document).on('click', '.quick-reply', function() {
-        const replyText = $(this).text();
-        $('#chat-input').val(replyText);
-        sendMessage();
+    clearChatBtn.addEventListener('click', () => {
+        // Leave the first greeting message and remove others
+        while (chatBody.children.length > 1) {
+            chatBody.removeChild(chatBody.lastChild);
+        }
     });
 
-    // Send message function
-    function sendMessage() {
-        const userInput = $('#chat-input').val().trim();
-        
-        if (userInput === '') return;
-        
-        if (!isFormSubmitted && !storedName && hasResponded) {
-            addMessage("Please fill in your details before we continue.", false);
-            return;
-        }
-
-        // Add user message to chat
-        addMessage(userInput, true);
-        $('#chat-input').val('');
-        
-        // If we have responded but form not submitted, show form
-        if (hasResponded && !isFormSubmitted && !storedName) {
-            showForm();
-            return;
-        }
-        
-        // Process user message and get bot response
-        showTypingIndicator();
-        
-        // Make Ajax call to the backend
-        $.ajax({
-            type: 'POST',
-            url: '/api/message/',
-            contentType: 'application/json',
-            data: JSON.stringify({ 
-                message: userInput,
-                user_id: userId,
-                name: storedName,
-                phone: storedPhone
-            }),
-            success: function(response) {
-                setTimeout(function() {
-                    hideTypingIndicator();
-                    addMessage(response.message, false);
-                    
-                    // Store user ID if not already stored
-                    if (!userId) {
-                        userId = response.user_id;
-                        localStorage.setItem('user_id', userId);
-                    }
-                }, 1000); // Delay to simulate typing
-            },
-            error: function(error) {
-                setTimeout(function() {
-                    hideTypingIndicator();
-                    addMessage("I'm sorry, I'm having trouble connecting to my brain. Please try again later.", false);
-                }, 1000);
-                console.error("Error:", error);
+    suggestionChips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+            const action = chip.getAttribute('data-action');
+            if(action) {
+                messageInput.value = action;
+                sendMessage();
             }
         });
+    });
+
+    function formatTime() {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
-    // User details form submission
-    $(document).on('submit', '#user-details-form', function(e) {
-        e.preventDefault();
-        const name = $('#name').val();
-        const phone = $('#phone').val();
+    function sendMessage() {
+        const text = messageInput.value.trim();
+        if (!text) return;
 
-        if (name && phone) {
-            localStorage.setItem('name', name);
-            localStorage.setItem('phone', phone);
-            storedName = name;
-            storedPhone = phone;
-            isFormSubmitted = true;
+        // Reset input immediately
+        messageInput.value = '';
+
+        // Add User Message
+        const userHTML = `
+            <div class="message-wrapper user fade-in">
+                <div class="message">
+                    <div class="message-content">
+                        <p>${escapeHtml(text)}</p>
+                    </div>
+                    <span class="time">${formatTime()}</span>
+                </div>
+            </div>
+        `;
+        chatBody.insertAdjacentHTML('beforeend', userHTML);
+        scrollToBottom();
+
+        // Show Typing Indicator
+        typingIndicator.style.display = 'flex';
+        chatBody.appendChild(typingIndicator); // move to bottom
+        scrollToBottom();
+
+        // Send to backend
+        fetch('/process_message/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({ message: text })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            typingIndicator.style.display = 'none';
+            const botReply = data.message || 'Sorry, no response.';
+            renderBotMessage(botReply);
+        })
+        .catch(err => {
+            typingIndicator.style.display = 'none';
+            renderBotMessage('Sorry, the server encountered an error. Please try again.');
+        });
+    }
+
+    function renderBotMessage(markdownText) {
+        const renderedText = renderMarkdown(markdownText);
+        const botHTML = `
+            <div class="message-wrapper bot fade-in">
+                <img src="${logoSrc}" alt="AI" class="avatar" onerror="this.src='https://manuu.edu.in/sites/default/files/logo-english-2023.png'">
+                <div class="message">
+                    <div class="message-content">
+                        ${renderedText}
+                    </div>
+                    <span class="time">${formatTime()}</span>
+                </div>
+            </div>
+        `;
+        chatBody.insertAdjacentHTML('beforeend', botHTML);
+        scrollToBottom();
+    }
+
+    // CSRF Token Helper
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Security Helpers
+    function escapeHtml(str) {
+        let div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function linkifyEscaped(escapedText) {
+        const urlRegex = /(https?:\/\/[^\s)]+)/g;
+        return escapedText.replace(urlRegex, function(url) {
+            const clean = url.replace(/[.,;:]$/, '');
+            return `<a href="${clean}" target="_blank" rel="noopener">${clean}</a>`;
+        });
+    }
+
+    // Custom Markdown Renderer (handles single heading and bullets nicely)
+    function renderMarkdown(text) {
+        if (!text) return '<p>Sorry, no response.</p>';
+        const raw = text.replace(/\r/g, '');
+        const lines = raw.split('\n').map(l => l.trim()).filter(l => l !== '');
+        
+        let html = '';
+        
+        if (lines.length > 0) {
+            const firstLine = lines[0];
+            let headingText = null;
+            // Check for **Heading** or # Heading
+            const boldMatch = firstLine.match(/^\*\*(.+)\*\*$/);
+            const hashMatch = firstLine.match(/^#+\s*(.+)$/);
             
-            $('#user-details-form').closest('.bot-message').remove();
-            addMessage(`Thank you, ${name}! I'll remember you next time. How can I help you with information about our college?`, false);
-            showQuickReplies();
-        }
-    });
+            if (boldMatch) headingText = escapeHtml(boldMatch[1]);
+            else if (hashMatch) headingText = escapeHtml(hashMatch[1]);
+            else if (firstLine.length < 100 && firstLine.endsWith(':')) headingText = escapeHtml(firstLine.slice(0, -1));
 
-    // Add feedback on bot messages
-    $(document).on('mouseenter', '.bot-message', function() {
-        if (!$(this).find('.message-feedback').length) {
-            $(this).append('<div class="message-feedback"><button class="feedback-btn feedback-helpful"><i class="fas fa-thumbs-up"></i></button><button class="feedback-btn feedback-unhelpful"><i class="fas fa-thumbs-down"></i></button></div>');
+            if (headingText) {
+                html += `<h3 class="bot-heading">${headingText}</h3>`;
+                lines.shift();
+            }
         }
-    });
 
-    $(document).on('mouseleave', '.bot-message', function() {
-        if (!$(this).hasClass('feedback-submitted')) {
-            $(this).find('.message-feedback').remove();
+        const bullets = lines.filter(l => /^(-|\*|•|\d+\.)\s+/.test(l));
+        if (bullets.length > 0) {
+            html += '<ul class="bot-bullets">';
+            let inList = false;
+            
+            for(let i=0; i<lines.length; i++) {
+                const line = lines[i];
+                if (/^(-|\*|•|\d+\.)\s+/.test(line)) {
+                    if (!inList) {
+                        inList = true;
+                    }
+                    let cleaned = line.replace(/^(-|\*|•|\d+\.)\s+/, '');
+                    
+                    if (cleaned.startsWith('[IMAGE]')) {
+                        const parts = cleaned.split(/\s+/, 2);
+                        const imgUrl = parts.length > 1 ? parts[1] : null;
+                        if (imgUrl) {
+                            html += `<img src="${escapeHtml(imgUrl)}" alt="image" style="max-width:260px;display:block;margin:8px 0; border-radius: 8px;"/>`;
+                        }
+                    } else {
+                         // bold highlights inside bullets
+                         cleaned = escapeHtml(cleaned);
+                         cleaned = cleaned.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                         cleaned = linkifyEscaped(cleaned);
+                         html += `<li>${cleaned}</li>`;
+                    }
+                } else {
+                    if (inList) {
+                        inList = false;
+                    }
+                    let cleaned = escapeHtml(line);
+                    cleaned = cleaned.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    cleaned = linkifyEscaped(cleaned);
+                    html += `<p style="margin-top: 8px;">${cleaned}</p>`;
+                }
+            }
+            if (inList) { html += '</ul>'; }
+            return html;
         }
-    });
 
-    $(document).on('click', '.feedback-helpful, .feedback-unhelpful', function() {
-        const feedbackType = $(this).hasClass('feedback-helpful') ? 'helpful' : 'unhelpful';
-        const messageElement = $(this).closest('.bot-message');
-        messageElement.addClass('feedback-submitted');
+        // Fallback to pure paragraphs
+        text.split('\n').forEach(block => {
+            if(block.trim() !== '') {
+               let safe = escapeHtml(block);
+               safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+               safe = linkifyEscaped(safe);
+               html += `<p style="margin-bottom: 8px;">${safe}</p>`;
+            }
+        });
         
-        $(this).closest('.message-feedback').html(`<span style="font-size: 11px; color: var(--primary-color);">${feedbackType === 'helpful' ? 'Thanks for your feedback!' : 'Thanks! I\'ll try to improve.'}</span>`);
-        
-        // Here you could send feedback to the server if desired
-        // $.ajax({
-        //     type: 'POST',
-        //     url: '/api/feedback/',
-        //     data: { 
-        //         message_id: messageId, 
-        //         feedback: feedbackType 
-        //     }
-        // });
-    });
-}); 
+        return html;
+    }
+});

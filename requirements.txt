@@ -1,4 +1,0 @@
-django
-scikit-learn
-numpy
-google-generativeai>=0.3.0 
