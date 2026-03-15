@@ -274,7 +274,7 @@ def get_bot_reply(user_query: str, context: Optional[str] = "", max_tokens: int 
         # Intercept LLM Error explicitly and rewrite it to a visually appealing UI message
         if reply.startswith("[LLM error]"):
             if "429" in reply or "quota" in reply.lower() or "insufficient_quota" in reply.lower():
-                return ("**⚠️ Temporary AI Limitations**\n"
+                return ("[QUOTA_EXCEEDED] **⚠️ Temporary AI Limitations**\n"
                         "Our background AI summarization service has temporarily reached its billing quota. "
                         "The system successfully found the information from MANUU's official website, but cannot summarize it right now. "
                         "\n\n*Please try again later or consult the provided official links directly!*")
@@ -284,7 +284,7 @@ def get_bot_reply(user_query: str, context: Optional[str] = "", max_tokens: int 
     except Exception as e:
         err_str = str(e)
         if "429" in err_str or "quota" in err_str.lower():
-            return ("**⚠️ Temporary AI Limitations**\n"
+            return ("[QUOTA_EXCEEDED] **⚠️ Temporary AI Limitations**\n"
                     "Our AI summarization service has temporarily reached its quota limits. "
                     "However, the source links below have still been fetched for your convenience!")
         return f"**⚠️ Error:** {err_str}"

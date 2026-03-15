@@ -2,95 +2,79 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-# A small helper that fetches a page and returns cleaned text
-# Returns None on failure
-# Enhanced to filter out navigation, headers, footers, and repetitive content
+# Enhanced fetcher that preserves structured data like tables and lists
+# for the Heuristic Parser Fallback.
 
-def fetch_from_web(url: str, max_chars: int = 2000) -> str | None:
+def fetch_from_web(url: str, max_chars: int = 5000) -> str | None:
     try:
-        resp = requests.get(url, timeout=10, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+        }
+        resp = requests.get(url, timeout=12, headers=headers)
         resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, 'html.parser')
         
-        # Remove script, style, and other non-content elements
-        for script in soup(["script", "style", "nav", "header", "footer", "aside"]):
-            script.decompose()
+        # Use lxml if available for speed, fallback to html.parser
+        try:
+            soup = BeautifulSoup(resp.text, 'lxml')
+        except Exception:
+            soup = BeautifulSoup(resp.text, 'html.parser')
         
-        # Remove common navigation and menu classes/ids
-        for element in soup.find_all(class_=re.compile(r'nav|menu|sidebar|breadcrumb|footer|header', re.I)):
-            element.decompose()
+        # Remove noisy elements entirely
+        for tag in soup(["script", "style", "nav", "header", "footer", "aside", "form", "iframe"]):
+            tag.decompose()
         
-        for element in soup.find_all(id=re.compile(r'nav|menu|sidebar|breadcrumb|footer|header', re.I)):
-            element.decompose()
+        # Targeted content extraction
+        main_body = soup.find('main') or soup.find('article') or soup.find(id='content') or soup.find(class_='content') or soup.body
         
-        # Try to find main content area (common patterns)
-        main_content = None
-        for selector in ['main', 'article', '.content', '#content', '.main-content', '#main-content', '.page-content']:
-            main_content = soup.select_one(selector)
-            if main_content:
-                break
-        
-        # Use main content if found, otherwise use body
-        if main_content:
-            text = main_content.get_text(separator=' ', strip=True)
-        else:
-            text = soup.get_text(separator=' ', strip=True)
-        
-        if not text:
+        if not main_body:
             return None
+
+        # Convert simple structural tags to text markers for the heuristic parser
+        for br in main_body.find_all("br"):
+            br.replace_with("\n")
         
-        # Clean up excessive whitespace and remove repetitive patterns
-        text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with single space
-        text = re.sub(r'\n\s*\n', '\n', text)  # Remove multiple newlines
+        for li in main_body.find_all("li"):
+            li.insert(0, "\n• ")
+            
+        for h in main_body.find_all(["h1", "h2", "h3", "h4"]):
+            h.insert(0, "\n\n### ")
+            h.append(" ###\n")
+
+        # Table preservation logic
+        for table in main_body.find_all("table"):
+            rows = []
+            for tr in table.find_all("tr"):
+                cells = [td.get_text(strip=True) for td in tr.find_all(["td", "th"])]
+                rows.append(" | ".join(cells))
+            table.replace_with("\n" + "\n".join(rows) + "\n")
+
+        text = main_body.get_text(separator=' ', strip=True)
         
-        # Remove common repetitive footer/header text patterns
-        patterns_to_remove = [
-            r'Skip to main content.*?Top',
-            r'Language\s*:.*?(?:Hindi|Urdu|English)',
-            r'Open configuration options.*?Configure block',
+        # Clean repetitive whitespace but keep newlines
+        text = re.sub(r' +', ' ', text)
+        text = re.sub(r'\n\s*\n', '\n\n', text)
+        
+        # Noise reduction patterns specifically for MANUU site
+        noise_patterns = [
+            r'Skip to main content',
+            r'Language Selection.*?(Hindi|Urdu|English)',
             r'Facebook.*?Twitter.*?Youtube.*?Instagram',
-            r'Follow Us.*?Facebook.*?Twitter.*?Youtube.*?Instagram',
-            r'Contact.*?FAQs.*?Website Policies',
-            r'© Copyright.*?All Rights Reserved',
-            r'Disclaimer\s*:.*?This website',
-            r'Maulana Azad National Urdu University.*?MANUU',
-            r'Home.*?About us.*?Academics.*?Administration',
+            r'©.*?Maulana Azad National Urdu University',
+            r'Search form.*?Search',
         ]
         
-        for pattern in patterns_to_remove:
+        for pattern in noise_patterns:
             text = re.sub(pattern, '', text, flags=re.IGNORECASE | re.DOTALL)
-        
-        # Remove lines that are too short (likely navigation items or labels)
-        lines = [line.strip() for line in text.split('\n') if len(line.strip()) > 10]
-        text = ' '.join(lines)
-        
-        # Remove excessive repetition of the same word/phrase
-        words = text.split()
-        if len(words) > 50:
-            # Remove very short repetitive words that appear too frequently
-            word_freq = {}
-            for word in words:
-                if len(word) > 2:
-                    word_freq[word.lower()] = word_freq.get(word.lower(), 0) + 1
             
-            # Filter out words that appear more than 20% of the time (likely navigation)
-            threshold = len(words) * 0.2
-            filtered_words = [w for w in words if word_freq.get(w.lower(), 0) < threshold]
-            text = ' '.join(filtered_words)
+        text = text.strip()
         
-        # Final cleanup
-        text = re.sub(r'\s+', ' ', text).strip()
+        if len(text) < 100:
+            # Fallback to absolute raw if cleaning was too aggressive
+            return soup.get_text(separator=' ', strip=True)[:max_chars]
+            
+        return text[:max_chars]
         
-        if not text or len(text) < 50:
-            # If filtering removed too much, fall back to simpler extraction
-            soup_fallback = BeautifulSoup(resp.text, 'html.parser')
-            for script in soup_fallback(["script", "style"]):
-                script.decompose()
-            text = soup_fallback.get_text(separator=' ', strip=True)
-            text = re.sub(r'\s+', ' ', text)
-        
-        return text[:max_chars] if text else None
     except Exception as e:
-        # Keep failures silent for production; print for local debugging
-        print(f"[web_fetcher] fetch failed for {url}: {e}")
+        print(f"[web_fetcher] Critical failure for {url}: {e}")
         return None

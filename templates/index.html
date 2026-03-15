@@ -3,26 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MANUU AI Assistant</title>
+    <title>MANUU AI Assistant | Premium</title>
     {% load static %}
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Main CSS -->
     <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
     <!-- Unicons for beautiful icons -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 </head>
 <body>
-    <main class="chat-container glass custom-scrollbar">
+    <!-- Background Animated Blobs for Mesh Effect -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <main class="chat-container">
         <header class="chat-header">
             <div class="header-content">
                 <div class="brand">
                     <img src="{% static 'images/manuu_logo.png' %}" alt="MANUU Logo" class="brand-logo" onerror="this.src='https://manuu.edu.in/sites/default/files/logo-english-2023.png'">
                     <div class="brand-text">
                         <h1>MANUU AI Assistant</h1>
-                        <span class="status"><span class="status-dot"></span> Online</span>
+                        <span class="status"><span class="status-dot"></span> Intelligent Agent Online</span>
                     </div>
                 </div>
                 <div class="header-actions">
@@ -63,17 +67,17 @@
                 <img src="{% static 'images/manuu_logo.png' %}" alt="AI" class="avatar" onerror="this.src='https://manuu.edu.in/sites/default/files/logo-english-2023.png'">
                 <div class="message">
                     <div class="message-content">
-                        <p>Welcome! I'm your intelligent MANUU Assistant. I can provide officially verified information about Maulana Azad National Urdu University, including the CSIT department. How can I assist you today?</p>
+                        <p>Welcome to the **Premium MANUU AI Experience**. I'm your intelligent assistant, here to provide officially verified data directly from Maulana Azad National Urdu University. How can I help you today?</p>
                     </div>
-                    <span class="time">Just now</span>
+                    <span class="time">Active Now</span>
                 </div>
             </div>
         </section>
 
-        <!-- Typing Indicator Container (Hidden by default) -->
+        <!-- Typing Indicator Container -->
         <div class="typing-indicator-wrapper" id="typing-indicator" style="display: none;">
             <img src="{% static 'images/manuu_logo.png' %}" alt="AI" class="avatar" onerror="this.src='https://manuu.edu.in/sites/default/files/logo-english-2023.png'">
-            <div class="glass typing-dots">
+            <div class="typing-dots">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -81,23 +85,22 @@
         </div>
 
         <footer class="chat-footer">
-            <div class="input-container glass">
+            <div class="input-container">
                 <button class="icon-btn attach-btn" title="Additional actions">
                     <i class="uil uil-plus"></i>
                 </button>
-                <input type="text" id="message-input" placeholder="Ask about admissions, campus, CSIT..." autocomplete="off">
+                <input type="text" id="message-input" placeholder="Ask anything about MANUU..." autocomplete="off">
                 <button class="send-btn" id="send-btn">
                     <i class="uil uil-message"></i>
                 </button>
             </div>
-            <div class="footer-note">Powered by OpenAI & MANUU Data</div>
+            <div class="footer-note">Official MANUU Intelligent Systems</div>
         </footer>
     </main>
 
     <!-- Passing STATIC_URL to JS to load images -->
     <script>
         window.STATIC_URL = "{% static '' %}";
-        // Helper if static tag fails
         if (!window.STATIC_URL || window.STATIC_URL.includes("%")) {
             window.STATIC_URL = "/static/";
         }

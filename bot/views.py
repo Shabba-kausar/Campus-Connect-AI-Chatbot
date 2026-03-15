@@ -1234,19 +1234,19 @@ Ask me about "Hostels" or "CSIT Faculty" to see it in action!"""
     
     # Map of keywords to categories
     category_keywords = {
-        'admission': ['admission', 'apply', 'enrollment', 'register', 'joining', 'entrance', 'test', 'application', 'requirements', 'deadline'],
-        'exam': ['exam', 'test', 'schedule', 'result', 'grade', 'score', 'marks', 'semester', 'assessment', 'evaluation', 'timetable', 'date'],
-        'academic': ['class', 'lecture', 'timetable', 'schedule', 'course', 'subject', 'timing', 'period', 'semester', 'academic', 'study'],
-        'facilities': ['facility', 'lab', 'laboratory', 'library', 'canteen', 'cafeteria', 'wifi', 'internet', 'computer', 'sports', 'gym'],
+        'admission': ['admission', 'apply', 'enrollment', 'register', 'joining', 'entrance', 'test', 'application', 'requirements', 'deadline', 'notification'],
+        'exam': ['exam', 'test', 'schedule', 'result', 'grade', 'score', 'marks', 'semester', 'assessment', 'evaluation', 'timetable', 'date', 'internal', 'midterm', 'final'],
+        'academic': ['class', 'lecture', 'timetable', 'schedule', 'course', 'subject', 'timing', 'period', 'semester', 'academic', 'study', 'department', 'school'],
+        'facilities': ['facility', 'lab', 'laboratory', 'library', 'canteen', 'cafeteria', 'wifi', 'internet', 'computer', 'sports', 'gym', 'amenity'],
         'events': ['event', 'fest', 'festival', 'celebration', 'cultural', 'technical', 'workshop', 'seminar', 'conference', 'competition'],
         'club': ['club', 'society', 'association', 'committee', 'group', 'team', 'organization', 'activity', 'extracurricular'],
-        'hostel': ['hostel', 'accommodation', 'stay', 'room', 'dormitory', 'residence', 'housing', 'facility', 'mess'],
-        'faculty': ['faculty', 'professor', 'teacher', 'instructor', 'staff', 'lecturer', 'department', 'expert', 'specialist'],
-        'course': ['course', 'program', 'curriculum', 'syllabus', 'subject', 'study', 'branch', 'specialization', 'major'],
-        'fee': ['fee', 'payment', 'tuition', 'cost', 'expense', 'scholarship', 'financial', 'aid', 'funding', 'loan'],
-        'placement': ['placement', 'job', 'career', 'recruitment', 'internship', 'employment', 'opportunity', 'company', 'interview'],
+        'hostel': ['hostel', 'accommodation', 'stay', 'room', 'dormitory', 'residence', 'housing', 'facility', 'mess', 'fees', 'warden'],
+        'faculty': ['faculty', 'professor', 'teacher', 'instructor', 'staff', 'lecturer', 'department', 'expert', 'specialist', 'hod', 'dean', 'principal'],
+        'course': ['course', 'program', 'curriculum', 'syllabus', 'subject', 'study', 'branch', 'specialization', 'major', 'minor', 'credit'],
+        'fee': ['fee', 'payment', 'tuition', 'cost', 'expense', 'scholarship', 'financial', 'aid', 'funding', 'loan', 'dues'],
+        'placement': ['placement', 'job', 'career', 'recruitment', 'internship', 'employment', 'opportunity', 'company', 'interview', 'tpo', 'training'],
         'transport': ['transport', 'bus', 'vehicle', 'timing', 'route', 'pickup', 'drop', 'schedule', 'travel'],
-        'contact': ['contact', 'phone', 'email', 'address', 'location', 'reach', 'enquiry', 'information', 'help', 'support']
+        'contact': ['contact', 'phone', 'email', 'address', 'location', 'reach', 'enquiry', 'information', 'help', 'support', 'office']
     }
     
     # Try to determine the category based on keywords
@@ -1302,6 +1302,7 @@ def extract_keywords(text):
     
     keywords = [word for word in words if word not in stop_words]
     return keywords
+
 
 def default_response():
     default_responses = [
